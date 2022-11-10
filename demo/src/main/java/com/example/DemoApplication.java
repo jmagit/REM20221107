@@ -1,7 +1,10 @@
 package com.example;
 
+import java.util.TreeMap;
+
 import javax.transaction.Transactional;
 
+import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -31,6 +34,14 @@ public class DemoApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
+	}
+	
+	@Bean
+	public OpenApiCustomiser sortSchemasAlphabetically() {
+	    return openApi -> {
+	        var schemas = openApi.getComponents().getSchemas();
+	        openApi.getComponents().setSchemas(new TreeMap<>(schemas));
+	    };
 	}
 	
 	@Bean
