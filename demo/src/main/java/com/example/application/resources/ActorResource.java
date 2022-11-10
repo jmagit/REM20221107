@@ -3,12 +3,15 @@ package com.example.application.resources;
 import java.net.URI;
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +27,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.domains.contracts.services.ActorService;
 import com.example.domains.entities.dtos.ActorDTO;
+import com.example.domains.entities.dtos.ActorShort;
+import com.example.domains.entities.dtos.ElementoShortDTO;
 import com.example.exceptions.BadRequestException;
 import com.example.exceptions.DuplicateKeyException;
 import com.example.exceptions.InvalidDataException;
@@ -38,8 +43,13 @@ public class ActorResource {
 	ActorService srv;
 	
 	@GetMapping
-	public List<ActorDTO> getAll() {
-		return srv.getByProjection(ActorDTO.class);
+	public List<ActorShort> getAll() {
+		return srv.getByProjection(ActorShort.class);
+	}
+
+	@GetMapping(params = "page")
+	public Page<ActorDTO> getAll(Pageable pageable) {
+		return srv.getByProjection(pageable, ActorDTO.class);
 	}
 
 	@GetMapping(path = "/{id}")
@@ -48,6 +58,17 @@ public class ActorResource {
 		if(item.isEmpty())
 			throw new NotFoundException();
 		return ActorDTO.from(item.get());
+	}
+	
+	@GetMapping(path = "/{id}/peliculas")
+	@Transactional
+	public List<ElementoShortDTO<Integer, String>> getPelis(@PathVariable int id) throws NotFoundException {
+		var item = srv.getOne(id);
+		if(item.isEmpty())
+			throw new NotFoundException();
+		return item.get().getFilmActors().stream()
+				.map(p -> new ElementoShortDTO<>(p.getFilm().getFilmId(), p.getFilm().getTitle()))
+				.toList();
 	}
 
 	@PostMapping

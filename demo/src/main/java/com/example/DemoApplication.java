@@ -73,7 +73,7 @@ public class DemoApplication implements CommandLineRunner {
 		
 //		dao.findAllBy(ActorDTO.class).forEach(System.out::println);
 //		dao.findAllBy(ActorShort.class).forEach(p -> System.out.println(p.getId() + " " + p.getNombre()));
-		srv.getByProjection(ActorShort.class).forEach(p -> System.out.println(p.getId() + " " + p.getNombre()));
+//		srv.getByProjection(ActorShort.class).forEach(p -> System.out.println(p.getId() + " " + p.getNombre()));
 	}
 
 }

@@ -1,5 +1,9 @@
 package com.example.domains.entities.dtos;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import com.example.domains.entities.Actor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,6 +17,9 @@ public class ActorDTO {
 	private int actorId;
 	@JsonProperty("nombre")
 	private String firstName;
+	@NotBlank
+	@Size(max=45, min=2)
+	@Pattern(regexp = "^[A-Z]+$", message = "Tiene que estar en mayusculas")
 	@JsonProperty("apellidos")
 	private String lastName;
 
