@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.exceptions.BadRequestException;
+import com.example.exceptions.DuplicateKeyException;
+import com.example.exceptions.InvalidDataException;
 import com.example.exceptions.NotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -48,8 +50,14 @@ public class ApiExceptionHandler {
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler({ BadRequestException.class })
+	@ExceptionHandler({ BadRequestException.class, DuplicateKeyException.class })
 	public ErrorMessage badRequest(Exception exception) {
 		return new ErrorMessage(exception.getMessage(), "");
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler({ InvalidDataException.class })
+	public ErrorMessage invalidData(Exception exception) {
+		return new ErrorMessage("Invalid data", exception.getMessage());
 	}
 }
