@@ -29,9 +29,9 @@ import com.example.domains.entities.dtos.PelisDto;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-//import org.springframework.security.access.prepost.PreAuthorize;
-//import io.swagger.v3.oas.annotations.Parameter;
-//import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RefreshScope
 @RestController
@@ -87,8 +87,8 @@ public class CotillaResource {
 	public List<PelisDto> getPelisProxy() {
 		return proxy.getPelis();
 	}
-//	@PreAuthorize("hasRole('ADMIN')")
-//	@SecurityRequirement(name = "bearerAuth")
+	@PreAuthorize("isAuthenticated()")
+	@SecurityRequirement(name = "bearerAuth")
 	@GetMapping(path = "/pelis/{id}/proxy")
 	public PelisDto getPelisProxy(@PathVariable int id) {
 		return proxy.getPeli(id);
@@ -107,7 +107,7 @@ public class CotillaResource {
 		return rslt;
 	}
 
-/*
+
 //	@PreAuthorize("hasRole('ADMIN')")
 	@PreAuthorize("authenticated")
 	@SecurityRequirement(name = "bearerAuth")
@@ -118,7 +118,7 @@ public class CotillaResource {
 			return proxy.meGusta(id);
 		return proxy.meGusta(id, authorization);
 	}
-*/
+
 	@Autowired
 	private CircuitBreakerFactory cbFactory;
 	
@@ -166,13 +166,12 @@ public class CotillaResource {
 		return "Fallback: " + e.getMessage()
 						+ " (" + ini.until(LocalTime.now(), ChronoUnit.MILLIS) + " ms)";
 	}
-/*	
 	@Value("${particular.para.demos}")
 	String config;
 	
 	@GetMapping(path = "/config")
+	@SecurityRequirement(name = "bearerAuth")
 	public String getConfig() {
 		return config;
 	}
-*/
 }
